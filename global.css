@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────────
+   ORI APP — Global Web Styles
+   These only apply on web (metro bundler). Native styles come from
+   NativeWind className props.
+   ───────────────────────────────────────────────────────────────── */
+
+@layer base {
+  :root {
+    /* Light mode CSS variables */
+    --color-background: #FAFAF7;
+    --color-surface: #FFFFFF;
+    --color-surface-2: #F5F3EE;
+    --color-text-primary: #0D2619;
+    --color-text-secondary: #4A6355;
+    --color-border: #D4D9D2;
+    --color-primary: #1A5238;
+    --color-accent: #C8922A;
+    scroll-behavior: smooth;
+  }
+
+  .dark {
+    /* Dark mode CSS variables */
+    --color-background: #0D1B12;
+    --color-surface: #1A2E1F;
+    --color-surface-2: #243425;
+    --color-text-primary: #F5F0E8;
+    --color-text-secondary: #8FAF96;
+    --color-border: #2A4A35;
+    --color-primary: #2D8A5C;
+    --color-accent: #C8922A;
+  }
+
+  html, body {
+    font-family: 'Inter-Regular', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Text selection color */
+  ::selection {
+    background-color: rgba(200, 146, 42, 0.3);
+    color: #0D1B12;
+  }
+}
