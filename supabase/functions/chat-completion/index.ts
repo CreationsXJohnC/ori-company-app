@@ -25,8 +25,9 @@ import { serve } from 'https://deno.land/std@0.208.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Origin':  '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-app-name',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 const OPENAI_API_URL = 'https://api.openai.com/v1';
@@ -164,10 +165,10 @@ serve(async (req: Request) => {
     }
 
     // ── Parse request ─────────────────────────────────────────────────────────
-    const { sessionId, message } = await req.json();
+    const { session_id: sessionId, message } = await req.json();
 
     if (!sessionId || !message || typeof message !== 'string') {
-      return new Response(JSON.stringify({ error: 'sessionId and message are required' }), {
+      return new Response(JSON.stringify({ error: 'session_id and message are required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -229,7 +230,7 @@ serve(async (req: Request) => {
       { role: 'user', content: message },
     ];
 
-    // ── Stream response from OpenAI ───────────────────────────────────────────
+    // ── Call OpenAI (non-streaming) ───────────────────────────────────────────
     const openaiRes = await fetch(`${OPENAI_API_URL}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -241,7 +242,7 @@ serve(async (req: Request) => {
         messages: openaiMessages,
         max_tokens: MAX_TOKENS,
         temperature: 0.7,
-        stream: true,
+        stream: false,
         presence_penalty: 0.1,
         frequency_penalty: 0.1,
       }),
@@ -256,95 +257,35 @@ serve(async (req: Request) => {
       });
     }
 
-    // ── Transform SSE stream and collect full response ─────────────────────────
-    let fullAssistantContent = '';
+    const openaiData = await openaiRes.json();
+    const assistantContent = openaiData.choices?.[0]?.message?.content ?? '';
+    const tokens = openaiData.usage?.total_tokens ?? null;
 
-    const transformStream = new TransformStream({
-      transform(chunk, controller) {
-        const text = new TextDecoder().decode(chunk);
-        const lines = text.split('\n').filter((line) => line.trim());
+    // ── Save assistant message to DB ──────────────────────────────────────────
+    if (assistantContent.trim()) {
+      const { error: insertError } = await serviceSupabase
+        .from('chat_messages')
+        .insert({
+          session_id:  sessionId,
+          role:        'assistant',
+          content:     assistantContent.trim(),
+          token_count: tokens,
+        });
 
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') {
-              controller.terminate();
-              return;
-            }
-            try {
-              const parsed = JSON.parse(data);
-              const delta = parsed.choices?.[0]?.delta?.content ?? '';
-              if (delta) {
-                fullAssistantContent += delta;
-                controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ delta })}\n\n`));
-              }
-            } catch {
-              // Skip malformed chunks
-            }
-          }
-        }
-      },
-    });
+      if (insertError) {
+        console.error('[chat-completion] Failed to save assistant message:', insertError);
+      }
 
-    // Pipe the response through our transformer
-    const streamBody = openaiRes.body!.pipeThrough(transformStream);
+      await serviceSupabase
+        .from('chat_sessions')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', sessionId);
+    }
 
-    // Save assistant message after streaming (background task)
-    // We use a ReadableStream that also intercepts the [DONE] signal
-    const responseStream = new ReadableStream({
-      start(controller) {
-        const reader = streamBody.getReader();
+    console.log(`[chat-completion] Done — ${assistantContent.length} chars, ${tokens} tokens`);
 
-        async function pump() {
-          try {
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) {
-                // Save the complete assistant message to DB
-                if (fullAssistantContent.trim()) {
-                  serviceSupabase
-                    .from('chat_messages')
-                    .insert({
-                      session_id: sessionId,
-                      role: 'assistant',
-                      content: fullAssistantContent.trim(),
-                    })
-                    .then(({ error }) => {
-                      if (error) console.error('[chat-completion] Failed to save assistant message:', error);
-                      else console.log(`[chat-completion] Saved assistant message (${fullAssistantContent.length} chars)`);
-                    });
-
-                  // Update session updated_at
-                  serviceSupabase
-                    .from('chat_sessions')
-                    .update({ updated_at: new Date().toISOString() })
-                    .eq('id', sessionId)
-                    .then(() => {});
-                }
-
-                controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'));
-                controller.close();
-                return;
-              }
-              controller.enqueue(value);
-            }
-          } catch (err) {
-            console.error('[chat-completion] Stream error:', err);
-            controller.error(err);
-          }
-        }
-
-        pump();
-      },
-    });
-
-    return new Response(responseStream, {
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        Connection: 'keep-alive',
-      },
+    return new Response(JSON.stringify({ response: assistantContent.trim(), tokens }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Internal server error';

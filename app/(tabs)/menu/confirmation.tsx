@@ -101,7 +101,7 @@ export default function ReservationConfirmationScreen() {
             <QRCode
               value={reservation.qr_data ?? reservation.reservation_code}
               size={200}
-              color="#0D1B12"
+              color="#7EBF94"
               backgroundColor="#FFFFFF"
             />
           </View>
@@ -133,8 +133,8 @@ export default function ReservationConfirmationScreen() {
 
           <View style={{ gap: 14 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: `${gold[500]}18`, alignItems: 'center', justifyContent: 'center' }}>
-                <Calendar size={18} color={gold[500]} />
+              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: `${gold[400]}18`, alignItems: 'center', justifyContent: 'center' }}>
+                <Calendar size={18} color={gold[400]} />
               </View>
               <View>
                 <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 12, color: colors.textTertiary }}>Date & Time</Text>
@@ -143,8 +143,8 @@ export default function ReservationConfirmationScreen() {
             </View>
 
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: `${gold[500]}18`, alignItems: 'center', justifyContent: 'center' }}>
-                <MapPin size={18} color={gold[500]} />
+              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: `${gold[400]}18`, alignItems: 'center', justifyContent: 'center' }}>
+                <MapPin size={18} color={gold[400]} />
               </View>
               <View>
                 <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 12, color: colors.textTertiary }}>Location</Text>

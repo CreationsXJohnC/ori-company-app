@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { TouchableOpacity, View, Text } from 'react-native';
+import { TouchableOpacity, View, Text, Platform } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { Check } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
@@ -28,7 +28,7 @@ export function Checkbox({ checked, onChange, label, error, disabled }: Checkbox
 
   const handlePress = async () => {
     if (disabled) return;
-    await Haptics.selectionAsync();
+    if (Platform.OS !== 'web') await Haptics.selectionAsync();
     scale.value = withSpring(0.85, { damping: 10 }, () => {
       scale.value = withSpring(1, { damping: 10 });
     });
@@ -51,7 +51,7 @@ export function Checkbox({ checked, onChange, label, error, disabled }: Checkbox
               height:          22,
               borderRadius:    6,
               borderWidth:     2,
-              borderColor:     error ? '#EF4444' : checked ? colors.accent : colors.border,
+              borderColor:     error ? '#E59F63' : checked ? colors.accent : colors.border,
               backgroundColor: checked ? colors.accent : 'transparent',
               alignItems:      'center',
               justifyContent:  'center',
@@ -88,7 +88,7 @@ export function Checkbox({ checked, onChange, label, error, disabled }: Checkbox
           style={{
             fontFamily:  fontFamilies.bodyRegular,
             fontSize:    12,
-            color:       '#EF4444',
+            color:       '#E59F63',
             paddingLeft: 34,
           }}
         >

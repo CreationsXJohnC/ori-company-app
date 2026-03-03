@@ -10,7 +10,7 @@
  */
 
 import { useColorScheme } from 'react-native';
-import { light, dark, forest, gold, warm, semantic, gradients } from './colors';
+import { light, dark, forest, gold, purple, yellow, warm, semantic, gradients } from './colors';
 import { fontFamilies, fontSizes, textStyles } from './typography';
 
 export * from './colors';
@@ -85,7 +85,7 @@ export const shadows = {
     elevation:     16,
   },
   gold: {
-    shadowColor:   '#C8922A',
+    shadowColor:   '#E59F63',
     shadowOffset:  { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius:  12,
@@ -124,6 +124,8 @@ export function useTheme() {
     colorScheme,
     forest,
     gold,
+    purple,
+    yellow,
     warm,
     semantic,
     gradients,

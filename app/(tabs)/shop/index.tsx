@@ -106,19 +106,19 @@ function ShopProductCard({ product, onPress }: { product: ShopProduct; onPress: 
           onPress={handleQuickAdd}
           disabled={!product.available}
           style={{
-            backgroundColor: isInCart ? `${gold[500]}22` : gold[500],
+            backgroundColor: isInCart ? `${gold[400]}22` : gold[400],
             borderRadius:    10,
             paddingVertical: 8,
             alignItems:      'center',
             borderWidth:     1.5,
-            borderColor:     gold[500],
+            borderColor:     gold[400],
           }}
         >
           <Text
             style={{
               fontFamily: fontFamilies.bodySemiBold,
               fontSize:   13,
-              color:      isInCart ? gold[400] : '#0D1B12',
+              color:      isInCart ? gold[400] : '#ffffff',
             }}
           >
             {isInCart
@@ -146,82 +146,83 @@ export default function ShopScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      {/* Header */}
-      <View
-        style={{
-          paddingHorizontal: 20,
-          paddingVertical:   16,
-          flexDirection:     'row',
-          alignItems:        'center',
-          justifyContent:    'space-between',
-          borderBottomWidth: 1,
-          borderBottomColor: colors.border,
-        }}
-      >
-        <View>
-          <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 26, color: colors.textPrimary }}>
-            Ori Clothing & Co
-          </Text>
-          <Text style={{ fontFamily: fontFamilies.headingItalic, fontSize: 13, color: gold[400] }}>
-            Wearables, Accessories & More
-          </Text>
-        </View>
-
-        {/* Cart Button */}
-        <TouchableOpacity
-          onPress={() => router.push('/(tabs)/shop/cart')}
+      {/* Header (title + category filter) */}
+      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.border }}>
+        {/* Row 1: Title + cart */}
+        <View
           style={{
-            width:           44,
-            height:          44,
-            borderRadius:    22,
-            backgroundColor: colors.surfaceAlt,
-            alignItems:      'center',
-            justifyContent:  'center',
-            position:        'relative',
+            paddingHorizontal: 20,
+            paddingTop:        16,
+            paddingBottom:     (!catLoading && categories) ? 8 : 16,
+            flexDirection:     'row',
+            alignItems:        'center',
+            justifyContent:    'space-between',
           }}
         >
-          <ShoppingBag size={22} color={colors.textPrimary} />
-          {cartCount > 0 && <NotificationBadge count={cartCount} />}
-        </TouchableOpacity>
-      </View>
+          <View>
+            <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 26, color: colors.textPrimary }}>
+              Ori Clothing & Co
+            </Text>
+            <Text style={{ fontFamily: fontFamilies.headingItalic, fontSize: 13, color: gold[400] }}>
+              Wearables, Accessories & More
+            </Text>
+          </View>
 
-      {/* Category Filter */}
-      {!catLoading && categories && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, gap: 8 }}
-        >
           <TouchableOpacity
-            onPress={() => setSelectedCategory(null)}
+            onPress={() => router.push('/(tabs)/shop/cart')}
             style={{
-              paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20,
-              backgroundColor:   !selectedCategory ? gold[500] : colors.surface,
-              borderWidth: 1, borderColor: !selectedCategory ? gold[500] : colors.border,
+              width:           44,
+              height:          44,
+              borderRadius:    22,
+              backgroundColor: colors.surfaceAlt,
+              alignItems:      'center',
+              justifyContent:  'center',
+              position:        'relative',
             }}
           >
-            <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 13, color: !selectedCategory ? '#0D1B12' : colors.textSecondary }}>
-              All
-            </Text>
+            <ShoppingBag size={22} color={colors.textPrimary} />
+            {cartCount > 0 && <NotificationBadge count={cartCount} />}
           </TouchableOpacity>
+        </View>
 
-          {categories.map((cat) => (
+        {/* Row 2: Category filter chips */}
+        {!catLoading && categories && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 12, gap: 8 }}
+          >
             <TouchableOpacity
-              key={cat.id}
-              onPress={() => setSelectedCategory(cat.id === selectedCategory ? null : cat.id)}
+              onPress={() => setSelectedCategory(null)}
               style={{
-                paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20,
-                backgroundColor:   selectedCategory === cat.id ? gold[500] : colors.surface,
-                borderWidth: 1, borderColor: selectedCategory === cat.id ? gold[500] : colors.border,
+                paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20,
+                backgroundColor:   !selectedCategory ? gold[400] : colors.surface,
+                borderWidth: 1, borderColor: !selectedCategory ? gold[400] : colors.border,
               }}
             >
-              <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 13, color: selectedCategory === cat.id ? '#0D1B12' : colors.textSecondary }}>
-                {cat.name}
+              <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 12, color: !selectedCategory ? '#ffffff' : colors.textSecondary }}>
+                All
               </Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
+
+            {categories.map((cat) => (
+              <TouchableOpacity
+                key={cat.id}
+                onPress={() => setSelectedCategory(cat.id === selectedCategory ? null : cat.id)}
+                style={{
+                  paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20,
+                  backgroundColor:   selectedCategory === cat.id ? gold[400] : colors.surface,
+                  borderWidth: 1, borderColor: selectedCategory === cat.id ? gold[400] : colors.border,
+                }}
+              >
+                <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 12, color: selectedCategory === cat.id ? '#ffffff' : colors.textSecondary }}>
+                  {cat.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
+      </View>
 
       {isLoading ? (
         <View style={{ flex: 1, padding: 16 }}>
@@ -237,7 +238,7 @@ export default function ShopScreen() {
           contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 100 }}
           columnWrapperStyle={{ gap: 12 }}
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={gold[500]} colors={[gold[500]]} />
+            <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={gold[400]} colors={[gold[400]]} />
           }
           ListEmptyComponent={
             <EmptyState

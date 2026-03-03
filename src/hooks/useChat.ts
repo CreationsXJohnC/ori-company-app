@@ -128,21 +128,7 @@ export function useSendMessage(options: UseSendMessageOptions) {
         if (error) throw error;
 
         const assistantContent = data?.response ?? '';
-
-        // Save assistant response
-        await supabase.from('chat_messages').insert({
-          session_id:  sessionId,
-          role:        'assistant',
-          content:     assistantContent,
-          token_count: data?.tokens ?? null,
-        });
-
-        // Update session timestamp
-        await supabase
-          .from('chat_sessions')
-          .update({ updated_at: new Date().toISOString() })
-          .eq('id', sessionId);
-
+        // Edge function saves the assistant message and updates the session timestamp
         onComplete?.(assistantContent);
         qc.invalidateQueries({ queryKey: QUERY_KEYS.chatSession(sessionId) });
       } catch (err) {

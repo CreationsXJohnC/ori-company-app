@@ -5,10 +5,18 @@
  */
 
 import { create } from 'zustand';
+import { Platform } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import { trackSignUp, trackLogin } from '@/lib/analytics';
 import type { User, Session } from '@supabase/supabase-js';
 import type { Profile, SignUpFormData } from '@/types';
+
+// On web, redirect back to this origin so detectSessionInUrl can exchange the
+// PKCE code automatically. On native, use the custom deep link scheme.
+const EMAIL_REDIRECT_URL =
+  Platform.OS === 'web'
+    ? (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8081')
+    : 'oriapp://verify-email';
 
 interface AuthStore {
   // State
@@ -68,7 +76,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         email:    data.email,
         password: data.password,
         options: {
-          emailRedirectTo: 'oriapp://verify-email',
+          emailRedirectTo: EMAIL_REDIRECT_URL,
           data: {
             full_name:  data.fullName,
             phone:      data.phone,

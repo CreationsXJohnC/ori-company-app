@@ -80,12 +80,12 @@ function TypingIndicator() {
           width:           34,
           height:          34,
           borderRadius:    17,
-          backgroundColor: `${gold[500]}22`,
+          backgroundColor: `${gold[400]}22`,
           alignItems:      'center',
           justifyContent:  'center',
         }}
       >
-        <Bot size={18} color={gold[500]} />
+        <Bot size={18} color={gold[400]} />
       </View>
       <View
         style={{
@@ -138,13 +138,13 @@ function MessageBubble({ message }: { message: ChatMessage }) {
             width:           34,
             height:          34,
             borderRadius:    17,
-            backgroundColor: `${gold[500]}22`,
+            backgroundColor: `${gold[400]}22`,
             alignItems:      'center',
             justifyContent:  'center',
             flexShrink:      0,
           }}
         >
-          <Bot size={18} color={gold[500]} />
+          <Bot size={18} color={gold[400]} />
         </View>
       )}
 
@@ -157,7 +157,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
       >
         <View
           style={{
-            backgroundColor:     isUser ? gold[500] : colors.surface,
+            backgroundColor:     isUser ? gold[400] : colors.surface,
             paddingHorizontal:   16,
             paddingVertical:     12,
             borderRadius:        18,
@@ -172,7 +172,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
               fontFamily: fontFamilies.bodyRegular,
               fontSize:   15,
               lineHeight: 22,
-              color:      isUser ? forest[950] : colors.textPrimary,
+              color:      isUser ? '#ffffff' : colors.textPrimary,
             }}
           >
             {message.content}
@@ -211,18 +211,18 @@ function DisclaimerBanner({ onDismiss }: { onDismiss: () => void }) {
       style={{
         marginHorizontal: 16,
         marginBottom:     8,
-        backgroundColor:  `${gold[500]}12`,
+        backgroundColor:  `${gold[400]}12`,
         borderRadius:     12,
         padding:          12,
         flexDirection:    'row',
         alignItems:       'flex-start',
         gap:              8,
         borderWidth:      1,
-        borderColor:      `${gold[500]}30`,
+        borderColor:      `${gold[400]}30`,
       }}
     >
       <Info size={15} color={gold[400]} style={{ marginTop: 1 }} />
-      <Text style={{ flex: 1, fontFamily: fontFamilies.bodyRegular, fontSize: 12, color: gold[300], lineHeight: 18 }}>
+      <Text style={{ flex: 1, fontFamily: fontFamilies.bodyRegular, fontSize: 12, color: gold[400], lineHeight: 18 }}>
         {COMPLIANCE.educationalDisclaimer}
       </Text>
       <TouchableOpacity onPress={onDismiss} hitSlop={8}>
@@ -285,7 +285,7 @@ export default function ChatScreen() {
   const handleNewSession = useCallback(async () => {
     if (!user) return;
     try {
-      const session = await createSession();
+      const session = await createSession(undefined);
       setSessionId(session.id);
       setInputText('');
     } catch (err: any) {
@@ -334,12 +334,12 @@ export default function ChatScreen() {
                 width:           40,
                 height:          40,
                 borderRadius:    20,
-                backgroundColor: `${gold[500]}22`,
+                backgroundColor: `${gold[400]}22`,
                 alignItems:      'center',
                 justifyContent:  'center',
               }}
             >
-              <Bot size={22} color={gold[500]} />
+              <Bot size={22} color={gold[400]} />
             </View>
             <View>
               <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 20, color: colors.textPrimary }}>Ori</Text>
@@ -400,14 +400,14 @@ export default function ChatScreen() {
                         width:           72,
                         height:          72,
                         borderRadius:    36,
-                        backgroundColor: `${gold[500]}20`,
+                        backgroundColor: `${gold[400]}20`,
                         borderWidth:     2,
-                        borderColor:     `${gold[500]}44`,
+                        borderColor:     `${gold[400]}44`,
                         alignItems:      'center',
                         justifyContent:  'center',
                       }}
                     >
-                      <Bot size={36} color={gold[500]} />
+                      <Bot size={36} color={gold[400]} />
                     </View>
                     <View style={{ alignItems: 'center', gap: 8 }}>
                       <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 22, color: colors.textPrimary, textAlign: 'center' }}>
@@ -504,6 +504,12 @@ export default function ChatScreen() {
                 returnKeyType="send"
                 onSubmitEditing={handleSend}
                 editable={!isStreaming}
+                onKeyPress={(e: any) => {
+                  if (Platform.OS === 'web' && e.nativeEvent?.key === 'Enter' && !e.nativeEvent?.shiftKey) {
+                    e.preventDefault?.();
+                    handleSend();
+                  }
+                }}
               />
             </View>
 
@@ -514,16 +520,16 @@ export default function ChatScreen() {
                 width:           48,
                 height:          48,
                 borderRadius:    24,
-                backgroundColor: inputText.trim() && !isStreaming ? gold[500] : colors.surfaceAlt,
+                backgroundColor: inputText.trim() && !isStreaming ? gold[400] : colors.surfaceAlt,
                 alignItems:      'center',
                 justifyContent:  'center',
                 borderWidth:     1,
-                borderColor:     inputText.trim() && !isStreaming ? gold[500] : colors.border,
+                borderColor:     inputText.trim() && !isStreaming ? gold[400] : colors.border,
               }}
             >
               <Send
                 size={20}
-                color={inputText.trim() && !isStreaming ? forest[950] : colors.textTertiary}
+                color={inputText.trim() && !isStreaming ? '#ffffff' : colors.textTertiary}
               />
             </TouchableOpacity>
           </View>

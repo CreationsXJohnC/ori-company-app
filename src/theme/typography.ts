@@ -1,32 +1,30 @@
 /**
  * ORI APP — Typography Design Tokens
  *
- * HOW TO SWAP FONTS:
- * 1. Add font files to /assets/fonts/
- * 2. Update font family names below
- * 3. Update app.json plugins.expo-font.fonts array
- * 4. Update tailwind.config.js fontFamily section
- *
- * PLACEHOLDER STATUS: Configured for PlayfairDisplay (headings) + Inter (body)
- * These font files need to be downloaded and placed in /assets/fonts/
+ * Brand font: Archivo (Google Fonts) — single family, all weights
+ * Hierarchy per brand book:
+ *   Heading    = Bold (700)
+ *   Subheading = Regular (400)
+ *   Body       = Light (300)
+ *   Caption    = Thin (100)
  */
 
 import { Platform } from 'react-native';
 
 // ─── Font Family Definitions ──────────────────────────────────────────────────
 export const fontFamilies = {
-  // Serif heading font — editorial, premium feel
-  // Placeholder: PlayfairDisplay — update with brand font when received
-  headingBold:    'PlayfairDisplay-Bold',
-  headingRegular: 'PlayfairDisplay-Regular',
-  headingItalic:  'PlayfairDisplay-Italic',
+  // Brand font: Archivo — heading weights
+  headingBold:    'Archivo-Bold',
+  headingRegular: 'Archivo-Regular',
+  headingItalic:  'Archivo-Italic',
 
-  // Sans-serif body font — clean, readable
-  // Placeholder: Inter — update with brand font when received
-  bodyRegular:    'Inter-Regular',
-  bodyMedium:     'Inter-Medium',
-  bodySemiBold:   'Inter-SemiBold',
-  bodyBold:       'Inter-Bold',
+  // Brand font: Archivo — body weights
+  bodyThin:       'Archivo-Thin',
+  bodyLight:      'Archivo-Light',
+  bodyRegular:    'Archivo-Regular',
+  bodyMedium:     'Archivo-Medium',
+  bodySemiBold:   'Archivo-SemiBold',
+  bodyBold:       'Archivo-Bold',
 
   // Monospace — for reservation codes, QR data
   mono: Platform.select({
@@ -111,17 +109,17 @@ export const textStyles = {
 
   // Body
   bodyLarge: {
-    fontFamily: fontFamilies.bodyRegular,
+    fontFamily: fontFamilies.bodyLight,
     fontSize:   fontSizes.lg,
     lineHeight: fontSizes.lg * lineHeights.relaxed,
   },
   body: {
-    fontFamily: fontFamilies.bodyRegular,
+    fontFamily: fontFamilies.bodyLight,
     fontSize:   fontSizes.base,
     lineHeight: fontSizes.base * lineHeights.relaxed,
   },
   bodySmall: {
-    fontFamily: fontFamilies.bodyRegular,
+    fontFamily: fontFamilies.bodyLight,
     fontSize:   fontSizes.sm,
     lineHeight: fontSizes.sm * lineHeights.relaxed,
   },
@@ -148,7 +146,7 @@ export const textStyles = {
 
   // Caption
   caption: {
-    fontFamily: fontFamilies.bodyRegular,
+    fontFamily: fontFamilies.bodyThin,
     fontSize:   fontSizes.xs,
     lineHeight: fontSizes.xs * lineHeights.normal,
   },

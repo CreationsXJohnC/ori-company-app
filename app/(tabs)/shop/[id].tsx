@@ -166,13 +166,13 @@ export default function ShopProductDetailScreen() {
                       style={{
                         minWidth: 48, paddingHorizontal: 16, paddingVertical: 10,
                         borderRadius: 10,
-                        backgroundColor: isSelected ? gold[500] : colors.surfaceAlt,
+                        backgroundColor: isSelected ? gold[400] : colors.surfaceAlt,
                         borderWidth: 1.5,
-                        borderColor: isSelected ? gold[500] : colors.border,
+                        borderColor: isSelected ? gold[400] : colors.border,
                         alignItems: 'center',
                       }}
                     >
-                      <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 14, color: isSelected ? '#0D1B12' : colors.textPrimary }}>
+                      <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 14, color: isSelected ? '#ffffff' : colors.textPrimary }}>
                         {size}
                       </Text>
                     </TouchableOpacity>
@@ -197,11 +197,11 @@ export default function ShopProductDetailScreen() {
                       onPress={() => setSelectedVariant((prev) => ({ ...prev, color }))}
                       style={{
                         paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10,
-                        backgroundColor: isSelected ? gold[500] : colors.surfaceAlt,
-                        borderWidth: 1.5, borderColor: isSelected ? gold[500] : colors.border,
+                        backgroundColor: isSelected ? gold[400] : colors.surfaceAlt,
+                        borderWidth: 1.5, borderColor: isSelected ? gold[400] : colors.border,
                       }}
                     >
-                      <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 14, color: isSelected ? '#0D1B12' : colors.textPrimary }}>
+                      <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 14, color: isSelected ? '#ffffff' : colors.textPrimary }}>
                         {color}
                       </Text>
                     </TouchableOpacity>

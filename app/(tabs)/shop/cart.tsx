@@ -144,13 +144,13 @@ export default function CartScreen() {
             <View
               style={{
                 marginHorizontal: 16, marginTop: 12,
-                backgroundColor: `${gold[500]}12`,
+                backgroundColor: `${gold[400]}12`,
                 borderRadius: 10, padding: 12,
                 flexDirection: 'row', alignItems: 'center', gap: 8,
               }}
             >
               <Truck size={16} color={gold[400]} />
-              <Text style={{ flex: 1, fontFamily: fontFamilies.bodyMedium, fontSize: 13, color: gold[300] }}>
+              <Text style={{ flex: 1, fontFamily: fontFamilies.bodyMedium, fontSize: 13, color: gold[400] }}>
                 Add {formatCurrency(freeShippingRemaining)} more for free shipping!
               </Text>
             </View>

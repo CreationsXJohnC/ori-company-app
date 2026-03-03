@@ -11,11 +11,10 @@ import {
   TouchableOpacity,
   ScrollView,
   RefreshControl,
-  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ShoppingBasket, Search, AlertTriangle, Leaf } from 'lucide-react-native';
+import { ShoppingBasket, AlertTriangle, Leaf, X } from 'lucide-react-native';
 import { Image } from 'expo-image';
 
 import { PressableCard } from '@/components/ui/Card';
@@ -151,9 +150,9 @@ function MenuProductCard({
               width:           36,
               height:          36,
               borderRadius:    18,
-              backgroundColor: isInReservation ? gold[500] : `${gold[500]}22`,
+              backgroundColor: isInReservation ? gold[400] : `${gold[400]}22`,
               borderWidth:     1.5,
-              borderColor:     gold[500],
+              borderColor:     gold[400],
               alignItems:      'center',
               justifyContent:  'center',
             }}
@@ -162,7 +161,7 @@ function MenuProductCard({
               style={{
                 fontFamily: fontFamilies.bodyBold,
                 fontSize:   18,
-                color:      isInReservation ? '#0D1B12' : gold[400],
+                color:      isInReservation ? '#ffffff' : gold[400],
                 lineHeight: 22,
               }}
             >
@@ -178,8 +177,9 @@ function MenuProductCard({
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function MenuScreen() {
   const router = useRouter();
-  const { colors, fontFamilies, gold, forest, warm } = useTheme();
+  const { colors, fontFamilies, gold } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showWarning, setShowWarning] = useState(true);
 
   const { data: categories, isLoading: catLoading } = useMenuCategories();
   const { data: products, isLoading: prodLoading, refetch, isRefetching } = useMenuProducts(selectedCategory);
@@ -196,123 +196,116 @@ export default function MenuScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      {/* ── Header ──────────────────────────────────────────────── */}
-      <View
-        style={{
-          paddingHorizontal: 20,
-          paddingVertical:   16,
-          flexDirection:     'row',
-          alignItems:        'center',
-          justifyContent:    'space-between',
-          borderBottomWidth: 1,
-          borderBottomColor: colors.border,
-        }}
-      >
-        <View>
-          <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 26, color: colors.textPrimary }}>
-            Ori Menu
-          </Text>
-          <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 13, color: colors.textSecondary }}>
-            Reserve for pickup · Pay onsite
-          </Text>
+      {/* ── Header (title + category filter) ────────────────────── */}
+      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.border }}>
+        {/* Row 1: Title + basket */}
+        <View
+          style={{
+            paddingHorizontal: 20,
+            paddingTop:        16,
+            paddingBottom:     (!catLoading && categories) ? 8 : 16,
+            flexDirection:     'row',
+            alignItems:        'center',
+            justifyContent:    'space-between',
+          }}
+        >
+          <View>
+            <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 26, color: colors.textPrimary }}>
+              Ori Menu
+            </Text>
+            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 13, color: colors.textSecondary }}>
+              Reserve for pickup · Pay onsite
+            </Text>
+          </View>
+
+          {itemCount > 0 && (
+            <TouchableOpacity
+              onPress={() => router.push('/(tabs)/menu/reservation')}
+              style={{
+                flexDirection:     'row',
+                alignItems:        'center',
+                gap:               6,
+                backgroundColor:   gold[400],
+                paddingHorizontal: 14,
+                paddingVertical:   8,
+                borderRadius:      20,
+              }}
+            >
+              <ShoppingBasket size={16} color="#ffffff" />
+              <Text style={{ fontFamily: fontFamilies.bodyBold, fontSize: 14, color: '#ffffff' }}>
+                {itemCount}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* Reservation Basket */}
-        {itemCount > 0 && (
-          <TouchableOpacity
-            onPress={() => router.push('/(tabs)/menu/reservation')}
-            style={{
-              flexDirection:  'row',
-              alignItems:     'center',
-              gap:            6,
-              backgroundColor: gold[500],
-              paddingHorizontal: 14,
-              paddingVertical:   8,
-              borderRadius:   20,
-            }}
+        {/* Row 2: Category filter chips */}
+        {!catLoading && categories && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 12, gap: 8 }}
           >
-            <ShoppingBasket size={16} color="#0D1B12" />
-            <Text style={{ fontFamily: fontFamilies.bodyBold, fontSize: 14, color: '#0D1B12' }}>
-              {itemCount}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setSelectedCategory(null)}
+              style={{
+                paddingHorizontal: 14,
+                paddingVertical:   6,
+                borderRadius:      20,
+                backgroundColor:   !selectedCategory ? gold[400] : colors.surface,
+                borderWidth:       1,
+                borderColor:       !selectedCategory ? gold[400] : colors.border,
+              }}
+            >
+              <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 12, color: !selectedCategory ? '#ffffff' : colors.textSecondary }}>
+                All
+              </Text>
+            </TouchableOpacity>
+
+            {categories.map((cat) => (
+              <TouchableOpacity
+                key={cat.id}
+                onPress={() => setSelectedCategory(cat.id === selectedCategory ? null : cat.id)}
+                style={{
+                  paddingHorizontal: 14,
+                  paddingVertical:   6,
+                  borderRadius:      20,
+                  backgroundColor:   selectedCategory === cat.id ? gold[400] : colors.surface,
+                  borderWidth:       1,
+                  borderColor:       selectedCategory === cat.id ? gold[400] : colors.border,
+                }}
+              >
+                <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 12, color: selectedCategory === cat.id ? '#ffffff' : colors.textSecondary }}>
+                  {cat.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         )}
       </View>
 
-      {/* ── Compliance Banner ────────────────────────────────────── */}
-      <View
-        style={{
-          marginHorizontal: 16,
-          marginTop:        12,
-          backgroundColor: `${gold[500]}12`,
-          borderRadius:    10,
-          padding:         10,
-          flexDirection:   'row',
-          alignItems:      'center',
-          gap:             8,
-        }}
-      >
-        <AlertTriangle size={14} color={gold[400]} />
-        <Text style={{ flex: 1, fontFamily: fontFamilies.bodyRegular, fontSize: 11, color: gold[400], lineHeight: 16 }}>
-          {COMPLIANCE.reservationNote}
-        </Text>
-      </View>
-
-      {/* ── Category Filter ──────────────────────────────────────── */}
-      {!catLoading && categories && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, gap: 8 }}
+      {/* ── Compliance Banner (dismissable) ──────────────────────── */}
+      {showWarning && (
+        <View
+          style={{
+            marginHorizontal: 16,
+            marginTop:        12,
+            backgroundColor:  `${gold[400]}12`,
+            borderRadius:     10,
+            padding:          10,
+            flexDirection:    'row',
+            alignItems:       'center',
+            gap:              8,
+          }}
         >
-          {/* All */}
-          <TouchableOpacity
-            onPress={() => setSelectedCategory(null)}
-            style={{
-              paddingHorizontal: 16,
-              paddingVertical:   8,
-              borderRadius:      20,
-              backgroundColor:   !selectedCategory ? gold[500] : colors.surface,
-              borderWidth:       1,
-              borderColor:       !selectedCategory ? gold[500] : colors.border,
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: fontFamilies.bodyMedium,
-                fontSize:   13,
-                color:      !selectedCategory ? '#0D1B12' : colors.textSecondary,
-              }}
-            >
-              All
-            </Text>
+          <AlertTriangle size={14} color={gold[400]} />
+          <Text style={{ flex: 1, fontFamily: fontFamilies.bodyRegular, fontSize: 11, color: gold[400], lineHeight: 16 }}>
+            {COMPLIANCE.reservationNote}
+          </Text>
+          <TouchableOpacity onPress={() => setShowWarning(false)} hitSlop={8}>
+            <X size={14} color={gold[400]} />
           </TouchableOpacity>
-
-          {categories.map((cat) => (
-            <TouchableOpacity
-              key={cat.id}
-              onPress={() => setSelectedCategory(cat.id === selectedCategory ? null : cat.id)}
-              style={{
-                paddingHorizontal: 16,
-                paddingVertical:   8,
-                borderRadius:      20,
-                backgroundColor:   selectedCategory === cat.id ? gold[500] : colors.surface,
-                borderWidth:       1,
-                borderColor:       selectedCategory === cat.id ? gold[500] : colors.border,
-              }}
-            >
-              <Text
-                style={{
-                  fontFamily: fontFamilies.bodyMedium,
-                  fontSize:   13,
-                  color:      selectedCategory === cat.id ? '#0D1B12' : colors.textSecondary,
-                }}
-              >
-                {cat.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        </View>
       )}
 
       {/* ── Product Grid ─────────────────────────────────────────── */}
@@ -337,8 +330,8 @@ export default function MenuScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={refetch}
-              tintColor={gold[500]}
-              colors={[gold[500]]}
+              tintColor={gold[400]}
+              colors={[gold[400]]}
             />
           }
           ListEmptyComponent={

@@ -3,7 +3,7 @@
  * CMS-driven content. Swap values in Supabase content_blocks table — no code change needed.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
-import { VideoView, useVideoPlayer } from 'expo-video';
 import {
   Youtube,
   Instagram,
@@ -34,13 +33,15 @@ import {
 import { Card, PressableCard } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Divider } from '@/components/ui/Divider';
-import { LoadingSpinner, Skeleton } from '@/components/ui/LoadingSpinner';
+import { Skeleton } from '@/components/ui/LoadingSpinner';
 import { useTheme } from '@/theme';
 import { useAllContent, useEvents, getContentValue } from '@/hooks/useContent';
 import { LINKS } from '@/utils/constants';
 import { formatDate } from '@/utils/formatting';
 import { trackScreenView } from '@/lib/analytics';
 import { useEffect } from 'react';
+
+const LOGO_MARK = require('../../../assets/brand/ORI Logo-02.png');
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -66,16 +67,7 @@ function VideoSection({
   posterUrl: string;
 }) {
   const { colors, fontFamilies, gold } = useTheme();
-  const [playing, setPlaying] = useState(false);
-  const player = useVideoPlayer(videoUrl || null, (p) => {
-    p.loop = false;
-  });
-
-  const handlePlay = () => {
-    if (!videoUrl) return;
-    setPlaying(true);
-    player.play();
-  };
+  const videoHeight = (SCREEN_WIDTH - 40) * 0.5625; // 16:9
 
   return (
     <View style={{ gap: 12 }}>
@@ -90,63 +82,49 @@ function VideoSection({
         )}
       </View>
 
-      <View
+      <TouchableOpacity
+        onPress={() => Linking.openURL(videoUrl)}
+        activeOpacity={0.9}
         style={{
           width:           SCREEN_WIDTH - 40,
-          height:          (SCREEN_WIDTH - 40) * 0.5625, // 16:9
+          height:          videoHeight,
           borderRadius:    16,
           overflow:        'hidden',
           backgroundColor: colors.surfaceAlt,
         }}
       >
-        {playing && videoUrl ? (
-          <VideoView
-            player={player}
-            style={{ width: '100%', height: '100%' }}
-            allowsFullscreen
-            allowsPictureInPicture
-          />
-        ) : (
-          <>
-            <Image
-              source={{ uri: posterUrl }}
-              style={{ width: '100%', height: '100%' }}
-              contentFit="cover"
-              transition={400}
-            />
-            {/* Play overlay */}
-            <TouchableOpacity
-              onPress={handlePlay}
-              activeOpacity={0.8}
-              style={{
-                position:        'absolute',
-                inset:           0,
-                alignItems:      'center',
-                justifyContent:  'center',
-                backgroundColor: 'rgba(0,0,0,0.35)',
-              }}
-            >
-              <View
-                style={{
-                  width:           64,
-                  height:          64,
-                  borderRadius:    32,
-                  backgroundColor: gold[500],
-                  alignItems:      'center',
-                  justifyContent:  'center',
-                }}
-              >
-                <Play size={28} color="#0D1B12" fill="#0D1B12" style={{ marginLeft: 3 }} />
-              </View>
-              {!videoUrl && (
-                <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 13, color: '#FFFFFF', marginTop: 12, opacity: 0.85 }}>
-                  Video coming soon
-                </Text>
-              )}
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
+        <Image
+          source={{ uri: posterUrl }}
+          style={{ width: '100%', height: '100%' }}
+          contentFit="cover"
+          transition={400}
+        />
+        <View
+          style={{
+            position:        'absolute',
+            inset:           0,
+            alignItems:      'center',
+            justifyContent:  'center',
+            backgroundColor: 'rgba(0,0,0,0.35)',
+          }}
+        >
+          <View
+            style={{
+              width:           64,
+              height:          64,
+              borderRadius:    32,
+              backgroundColor: gold[400],
+              alignItems:      'center',
+              justifyContent:  'center',
+            }}
+          >
+            <Play size={28} color="#ffffff" fill="#ffffff" style={{ marginLeft: 3 }} />
+          </View>
+          <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 12, color: '#FFFFFF', marginTop: 10, opacity: 0.9 }}>
+            Watch on YouTube
+          </Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -163,13 +141,13 @@ function ValueCard({ title, body }: { title: string; body: string }) {
           width:           44,
           height:          44,
           borderRadius:    22,
-          backgroundColor: `${gold[500]}22`,
+          backgroundColor: `${gold[400]}22`,
           alignItems:      'center',
           justifyContent:  'center',
           marginBottom:    12,
         }}
       >
-        <Icon size={22} color={gold[500]} />
+        <Icon size={22} color={gold[400]} />
       </View>
       <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 16, color: colors.textPrimary, marginBottom: 6, lineHeight: 22 }}>
         {title}
@@ -195,13 +173,13 @@ function EventCard({ event }: { event: any }) {
           width:           52,
           height:          52,
           borderRadius:    12,
-          backgroundColor: `${gold[500]}22`,
+          backgroundColor: `${gold[400]}22`,
           alignItems:      'center',
           justifyContent:  'center',
           flexShrink:      0,
         }}
       >
-        <Calendar size={24} color={gold[500]} />
+        <Calendar size={24} color={gold[400]} />
       </View>
       <View style={{ flex: 1, gap: 4 }}>
         <Text style={{ fontFamily: fontFamilies.bodySemiBold, fontSize: 15, color: colors.textPrimary, lineHeight: 21 }}>
@@ -260,9 +238,9 @@ function SocialButton({
         alignItems:      'center',
         justifyContent:  'center',
         gap:             8,
-        backgroundColor: variant === 'primary' ? gold[500] : colors.surface,
+        backgroundColor: variant === 'primary' ? gold[400] : colors.surface,
         borderWidth:     1.5,
-        borderColor:     variant === 'primary' ? gold[500] : colors.border,
+        borderColor:     variant === 'primary' ? gold[400] : colors.border,
         borderRadius:    14,
         paddingVertical: 14,
       }}
@@ -272,7 +250,7 @@ function SocialButton({
         style={{
           fontFamily: fontFamilies.bodySemiBold,
           fontSize:   14,
-          color:      variant === 'primary' ? '#0D1B12' : colors.textPrimary,
+          color:      '#ffffff',
         }}
       >
         {label}
@@ -283,10 +261,9 @@ function SocialButton({
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function AboutScreen() {
-  const { colors, fontFamilies, gold, forest } = useTheme();
+  const { colors, fontFamilies, gold, forest, yellow } = useTheme();
   const { data: content, isLoading: contentLoading } = useAllContent();
   const { data: events, isLoading: eventsLoading }   = useEvents();
-
   useEffect(() => {
     trackScreenView('About');
   }, []);
@@ -306,12 +283,12 @@ export default function AboutScreen() {
   const communityHead = getContentValue(community, 'headline') || 'Rooted in DC';
   const communityBody = getContentValue(community, 'body')     || 'Ori Company is deeply committed to Washington, DC.';
 
-  const companyVideoUrl  = getContentValue(compVid, 'video_url')  || '';
+  const companyVideoUrl  = getContentValue(compVid, 'video_url')  || 'https://youtu.be/JGpWp4QbNUc?si=ijnwAn75NUwP6A43';
   const companyPosterUrl = getContentValue(compVid, 'poster_url') || 'https://placehold.co/800x450/0D1B12/C8922A?text=Our+Story';
   const companyVidTitle  = getContentValue(compVid, 'title')      || 'Our Story';
   const companyVidSub    = getContentValue(compVid, 'subtitle')   || '';
 
-  const founderVideoUrl  = getContentValue(foundVid, 'video_url')  || '';
+  const founderVideoUrl  = getContentValue(foundVid, 'video_url')  || 'https://youtu.be/hdjk-f7CwR0?si=cZqdF_4hLS1w70Z8';
   const founderPosterUrl = getContentValue(foundVid, 'poster_url') || 'https://placehold.co/800x450/0D1B12/F5F0E8?text=Founder+Video';
   const founderVidTitle  = getContentValue(foundVid, 'title')      || 'From the Founder';
   const founderVidSub    = getContentValue(foundVid, 'subtitle')   || '';
@@ -345,33 +322,23 @@ export default function AboutScreen() {
           style={{
             padding:         24,
             paddingTop:      32,
-            backgroundColor: forest[950],
+            backgroundColor: forest[400],
             gap:             16,
           }}
         >
-          {/* Logo placeholder */}
-          <View style={{ alignItems: 'flex-start' }}>
-            <View
-              style={{
-                width:           52,
-                height:          52,
-                borderRadius:    26,
-                borderWidth:     2,
-                borderColor:     gold[500],
-                alignItems:      'center',
-                justifyContent:  'center',
-              }}
-            >
-              <Text style={{ fontSize: 26 }}>🌿</Text>
-            </View>
-          </View>
+          {/* Brand logo */}
+          <Image
+            source={LOGO_MARK}
+            style={{ width: 56, height: 56 }}
+            contentFit="contain"
+          />
 
           <View style={{ gap: 8 }}>
-            <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 30, color: '#F5F0E8', letterSpacing: -0.5, lineHeight: 38 }}>
+            <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 30, color: '#ffffff', letterSpacing: -0.5, lineHeight: 38 }}>
               {headline}
             </Text>
-            <View style={{ height: 2, width: 48, backgroundColor: gold[500] }} />
-            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 15, color: '#8FAF96', lineHeight: 24 }}>
+            <View style={{ height: 2, width: 48, backgroundColor: gold[400] }} />
+            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 15, color: '#ffffff', lineHeight: 24 }}>
               {overviewBody}
             </Text>
           </View>
@@ -379,14 +346,14 @@ export default function AboutScreen() {
           {/* Mission callout */}
           <View
             style={{
-              backgroundColor: `${gold[500]}15`,
+              backgroundColor: `${gold[400]}20`,
               borderLeftWidth: 3,
-              borderLeftColor: gold[500],
+              borderLeftColor: yellow[200],
               borderRadius:    8,
               padding:         14,
             }}
           >
-            <Text style={{ fontFamily: fontFamilies.headingItalic, fontSize: 15, color: gold[400], lineHeight: 23 }}>
+            <Text style={{ fontFamily: fontFamilies.headingItalic, fontSize: 15, color: '#ffffff', lineHeight: 23 }}>
               "{missionText}"
             </Text>
           </View>
@@ -492,7 +459,7 @@ export default function AboutScreen() {
 
             <View style={{ flexDirection: 'row', gap: 12 }}>
               <SocialButton
-                icon={<Youtube size={20} color="#0D1B12" />}
+                icon={<Youtube size={20} color="#ffffff" />}
                 label="YouTube"
                 url={youtubeUrl}
                 variant="primary"

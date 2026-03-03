@@ -3,13 +3,11 @@
  * First screen new users see. Dark, premium feel matching oricompanydc.com aesthetic.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
-  ScrollView,
-  ImageBackground,
-  Dimensions,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -19,7 +17,6 @@ import Animated, {
   withTiming,
   withDelay,
   withSpring,
-  Easing,
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -28,34 +25,13 @@ import { Divider } from '@/components/ui/Divider';
 import { useTheme } from '@/theme';
 import { COMPLIANCE } from '@/utils/constants';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-// ─── Animated Leaf Logo Placeholder ──────────────────────────────────────────
-function OriLogoPlaceholder() {
-  const { gold } = useTheme();
-  return (
-    <View style={{ alignItems: 'center', gap: 4 }}>
-      {/* Replace this View with your actual SVG logo component */}
-      <View
-        style={{
-          width:           80,
-          height:          80,
-          borderRadius:    40,
-          borderWidth:     2,
-          borderColor:     gold[500],
-          alignItems:      'center',
-          justifyContent:  'center',
-        }}
-      >
-        <Text style={{ fontSize: 36 }}>🌿</Text>
-      </View>
-    </View>
-  );
-}
+// Assets
+const BG_IMAGE    = require('../../assets/images/Asset 192.png');
+const LOGO_ORANGE = require('../../assets/brand/ORI Logo-09.png');  // orange "Ori" wordmark
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const { fontFamilies, gold, warm, forest } = useTheme();
+  const { fontFamilies, gold } = useTheme();
 
   // Staggered entrance animations
   const logoOpacity    = useSharedValue(0);
@@ -88,43 +64,39 @@ export default function WelcomeScreen() {
   }));
 
   return (
-    <View style={{ flex: 1, backgroundColor: forest[950] }}>
-      {/* Background gradient */}
+    <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+      {/* Background image — bottommost layer */}
+      <Image
+        source={BG_IMAGE}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }}
+        resizeMode="cover"
+      />
+      {/* Semi-transparent gradient overlay */}
       <LinearGradient
-        colors={[forest[950], '#112218', '#0A150E']}
+        colors={['rgba(255,255,255,0.70)', 'rgba(244,234,169,0.90)']}
         style={{ position: 'absolute', inset: 0 }}
       />
-
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1, paddingHorizontal: 28, justifyContent: 'space-between', paddingVertical: 24 }}>
 
           {/* ── Logo + Tagline Section ──────────────────────────────── */}
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 28 }}>
 
-            <Animated.View style={[logoStyle, { alignItems: 'center', gap: 16 }]}>
-              {/* BRAND ASSET: Replace OriLogoPlaceholder with your actual logo */}
-              <OriLogoPlaceholder />
-
-              <View style={{ alignItems: 'center', gap: 4 }}>
-                <Text
-                  style={{
-                    fontFamily: fontFamilies.headingBold,
-                    fontSize:   40,
-                    color:      warm[100],
-                    letterSpacing: -0.5,
-                  }}
-                >
-                  Ori Company
-                </Text>
-                <View
-                  style={{
-                    height:          1.5,
-                    width:           60,
-                    backgroundColor: gold[500],
-                    marginTop:       4,
-                  }}
-                />
-              </View>
+            <Animated.View style={[logoStyle, { alignItems: 'center', gap: 20 }]}>
+              {/* Orange "Ori" wordmark */}
+              <Image
+                source={LOGO_ORANGE}
+                style={{ width: 140, height: 48 }}
+                resizeMode="contain"
+              />
+              <View
+                style={{
+                  height:          1.5,
+                  width:           60,
+                  backgroundColor: gold[400],
+                  marginTop:       4,
+                }}
+              />
             </Animated.View>
 
             <Animated.View style={[taglineStyle, { alignItems: 'center', gap: 20 }]}>
@@ -144,7 +116,7 @@ export default function WelcomeScreen() {
                 style={{
                   fontFamily: fontFamilies.bodyRegular,
                   fontSize:   15,
-                  color:      '#8FAF96',
+                  color:      '#7EBF94',
                   textAlign:  'center',
                   lineHeight: 24,
                   maxWidth:   280,
@@ -163,8 +135,8 @@ export default function WelcomeScreen() {
                       paddingVertical:   6,
                       borderRadius:      20,
                       borderWidth:       1,
-                      borderColor:       `${gold[500]}44`,
-                      backgroundColor:   `${gold[500]}11`,
+                      borderColor:       `${gold[400]}44`,
+                      backgroundColor:   `${gold[400]}11`,
                     }}
                   >
                     <Text
@@ -207,7 +179,7 @@ export default function WelcomeScreen() {
               style={{
                 fontFamily: fontFamilies.bodyRegular,
                 fontSize:   11,
-                color:      '#5F8A6A',
+                color:      '#7EBF94',
                 textAlign:  'center',
                 lineHeight: 17,
               }}

@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Text,
   ActivityIndicator,
-  StyleSheet,
   View,
   type TouchableOpacityProps,
 } from 'react-native';
@@ -16,9 +15,9 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { useTheme } from '@/theme';
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
@@ -58,7 +57,7 @@ export function Button({
   }));
 
   const handlePress = async (e: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => {
-    if (haptic) {
+    if (haptic && Platform.OS !== 'web') {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     onPress?.(e);
@@ -79,7 +78,7 @@ export function Button({
     primary:   { bg: colors.accent,   text: colors.accentText },
     secondary: { bg: 'transparent',   text: colors.primary, border: colors.primary },
     ghost:     { bg: 'transparent',   text: colors.textSecondary },
-    danger:    { bg: '#EF4444',       text: '#FFFFFF' },
+    danger:    { bg: '#E59F63',       text: '#FFFFFF' },
   };
 
   // ── Size Styles ─────────────────────────────────────────────────────────────

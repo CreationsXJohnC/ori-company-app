@@ -19,7 +19,7 @@ import { forgotPasswordSchema, type ForgotPasswordFormData } from '@/utils/valid
 
 export default function ForgotPasswordScreen() {
   const router  = useRouter();
-  const { colors, fontFamilies, gold, forest, warm } = useTheme();
+  const { colors, fontFamilies, gold } = useTheme();
   const sendReset = useAuthStore((s) => s.sendPasswordReset);
   const toast   = useToast();
   const [sent, setSent] = useState(false);
@@ -39,17 +39,17 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: forest[950] }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
       {/* Header */}
       <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 12, gap: 12 }}>
         <TouchableOpacity
           onPress={() => router.back()}
           hitSlop={8}
-          style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#1A2E1F', alignItems: 'center', justifyContent: 'center' }}
+          style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#F4EAA9', alignItems: 'center', justifyContent: 'center' }}
         >
-          <ArrowLeft size={20} color={warm[100]} />
+          <ArrowLeft size={20} color="#7EBF94" />
         </TouchableOpacity>
-        <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 22, color: warm[100] }}>
+        <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 22, color: '#7EBF94' }}>
           Reset Password
         </Text>
       </View>
@@ -57,20 +57,20 @@ export default function ForgotPasswordScreen() {
       <View style={{ flex: 1, padding: 24, gap: 24 }}>
         {sent ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-            <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: `${gold[500]}18`, borderWidth: 2, borderColor: `${gold[500]}44`, alignItems: 'center', justifyContent: 'center' }}>
-              <Send size={36} color={gold[500]} />
+            <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: `${gold[400]}18`, borderWidth: 2, borderColor: `${gold[400]}44`, alignItems: 'center', justifyContent: 'center' }}>
+              <Send size={36} color={gold[400]} />
             </View>
-            <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 24, color: warm[100], textAlign: 'center' }}>
+            <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 24, color: '#7EBF94', textAlign: 'center' }}>
               Check Your Inbox
             </Text>
-            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 15, color: '#8FAF96', textAlign: 'center', lineHeight: 23 }}>
+            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 15, color: '#7EBF94', textAlign: 'center', lineHeight: 23 }}>
               We sent a password reset link to your email. Check your inbox and follow the link to reset your password.
             </Text>
             <Button label="Back to Sign In" variant="secondary" size="lg" fullWidth onPress={() => router.push('/(auth)/sign-in')} />
           </View>
         ) : (
           <>
-            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 15, color: '#8FAF96', lineHeight: 23 }}>
+            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 15, color: '#7EBF94', lineHeight: 23 }}>
               Enter your email address and we'll send you a link to reset your password.
             </Text>
 

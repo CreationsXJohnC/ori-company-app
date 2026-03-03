@@ -4,6 +4,11 @@ module.exports = {
     './app/**/*.{js,jsx,ts,tsx}',
     './src/**/*.{js,jsx,ts,tsx}',
   ],
+  // 'class' allows NativeWind to programmatically sync dark mode with
+  // react-native's Appearance API. Without this, NativeWind defaults to
+  // 'media' (CSS media query only) and throws when any code tries to
+  // manually set the color scheme.
+  darkMode: 'class',
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
@@ -12,55 +17,83 @@ module.exports = {
       // Primary brand green palette (placeholder — update with brand hex)
       // ─────────────────────────────────────────────────────────────
       colors: {
-        // Deep forest greens — primary brand palette
+        // Primary brand — Sage Green (#7EBF94)
         forest: {
-          50:  '#f0f7f2',
-          100: '#d9eee0',
-          200: '#b3dcc2',
-          300: '#80c49e',
-          400: '#4da87a',
-          500: '#2d8a5c',
-          600: '#1f6a45',
-          700: '#1a5238',
-          800: '#163f2c',
-          900: '#0d2619',
-          950: '#0D1B12', // Background dark (primary bg)
+          50:  '#f1f9f4',
+          100: '#dff0e6',
+          200: '#bddfc8',
+          300: '#96c9ac',
+          400: '#7EBF94', // Brand green
+          500: '#5caa7b',
+          600: '#448962',
+          700: '#336e4c',
+          800: '#27543b',
+          900: '#1b3d29',
+          950: '#0e2116', // Dark mode background
         },
-        // Warm gold accent palette
+        // CTA / warm accent — Peach-Orange (#E59F63)
         gold: {
-          50:  '#fdf9ec',
-          100: '#faf0cc',
-          200: '#f4de95',
-          300: '#eec85a',
-          400: '#e6b02e',
-          500: '#C8922A', // Primary accent
-          600: '#a5721f',
-          700: '#845419',
-          800: '#6b4117',
-          900: '#593617',
-          950: '#321c09',
+          50:  '#fdf7f0',
+          100: '#faeadb',
+          200: '#f5d1af',
+          300: '#ecb37c',
+          400: '#E59F63', // Brand orange
+          500: '#d98540',
+          600: '#c06a2e',
+          700: '#9e5222',
+          800: '#7e401e',
+          900: '#663319',
+          950: '#3a1b0c',
         },
-        // Warm neutrals for text and surfaces
+        // Secondary accent — Muted Lavender (#AE93C1)
+        purple: {
+          50:  '#f7f4fb',
+          100: '#ede7f4',
+          200: '#d8cde9',
+          300: '#c2add9',
+          400: '#AE93C1', // Brand purple
+          500: '#9378ab',
+          600: '#785d91',
+          700: '#604a78',
+          800: '#4c3a61',
+          900: '#3b2c4d',
+          950: '#221a2d',
+        },
+        // Highlight — Cream Yellow (#F4EAA9)
+        yellow: {
+          50:  '#fefdf5',
+          100: '#faf6e0',
+          200: '#F4EAA9', // Brand yellow (use as bg highlight)
+          300: '#edd871',
+          400: '#e4c43e',
+          500: '#d4ad26',
+          600: '#b08f1c',
+          700: '#8d7117',
+          800: '#725a15',
+          900: '#5c4913',
+          950: '#33280c',
+        },
+        // Warm neutrals (cream-based)
         warm: {
-          50:  '#FAFAF7', // Light background
-          100: '#F5F0E8', // Light text primary
-          200: '#EAE4D8',
-          300: '#D4CCB9',
-          400: '#B8AE98',
-          500: '#9A8E77',
-          600: '#7D7060',
-          700: '#635849',
-          800: '#4A4136',
-          900: '#322B22',
-          950: '#1A1510',
+          50:  '#FAFAF7',
+          100: '#F5F2EB',
+          200: '#EAE5D6',
+          300: '#D4CDB7',
+          400: '#B8AE95',
+          500: '#9A9077',
+          600: '#7C7360',
+          700: '#625C49',
+          800: '#494437',
+          900: '#322E25',
+          950: '#1C1913',
         },
         // Surface colors
         surface: {
           light:      '#FFFFFF',
-          'light-2':  '#F5F3EE',
-          dark:       '#1A2E1F', // Card surface on dark bg
-          'dark-2':   '#243425', // Elevated surface on dark bg
-          'dark-3':   '#2F4233', // Higher elevation
+          'light-2':  '#F5F2EB',
+          dark:       '#162c1e',
+          'dark-2':   '#1e3828',
+          'dark-3':   '#254a34',
         },
         // Status colors
         success: '#22C55E',
@@ -69,14 +102,16 @@ module.exports = {
         info:    '#3B82F6',
       },
       fontFamily: {
-        // Placeholder: swap file names in assets/fonts/ and update these
-        heading: ['PlayfairDisplay-Bold', 'Georgia', 'serif'],
-        'heading-regular': ['PlayfairDisplay-Regular', 'Georgia', 'serif'],
-        'heading-italic': ['PlayfairDisplay-Italic', 'Georgia', 'serif'],
-        body: ['Inter-Regular', 'System', 'sans-serif'],
-        'body-medium': ['Inter-Medium', 'System', 'sans-serif'],
-        'body-semibold': ['Inter-SemiBold', 'System', 'sans-serif'],
-        'body-bold': ['Inter-Bold', 'System', 'sans-serif'],
+        // Brand font: Archivo (Google Fonts) — all weights
+        heading:         ['Archivo-Bold', 'sans-serif'],
+        'heading-regular': ['Archivo-Regular', 'sans-serif'],
+        'heading-italic':  ['Archivo-Italic', 'sans-serif'],
+        body:            ['Archivo-Light', 'sans-serif'],
+        'body-thin':     ['Archivo-Thin', 'sans-serif'],
+        'body-regular':  ['Archivo-Regular', 'sans-serif'],
+        'body-medium':   ['Archivo-Medium', 'sans-serif'],
+        'body-semibold': ['Archivo-SemiBold', 'sans-serif'],
+        'body-bold':     ['Archivo-Bold', 'sans-serif'],
       },
       fontSize: {
         '2xs': ['10px', { lineHeight: '14px' }],

@@ -43,7 +43,7 @@ export const Input = forwardRef<TextInput, InputProps>(
     const [showPassword, setShowPassword] = useState(false);
 
     const borderColor = error
-      ? '#EF4444'
+      ? '#E59F63'
       : isFocused
       ? colors.accent
       : colors.border;
@@ -62,7 +62,7 @@ export const Input = forwardRef<TextInput, InputProps>(
               {label}
             </Text>
             {required && (
-              <Text style={{ color: '#EF4444', fontSize: 14 }}>*</Text>
+              <Text style={{ color: '#E59F63', fontSize: 14 }}>*</Text>
             )}
           </View>
         )}
@@ -122,7 +122,7 @@ export const Input = forwardRef<TextInput, InputProps>(
             style={{
               fontFamily: fontFamilies.bodyRegular,
               fontSize:   12,
-              color:      '#EF4444',
+              color:      '#E59F63',
             }}
           >
             {error}

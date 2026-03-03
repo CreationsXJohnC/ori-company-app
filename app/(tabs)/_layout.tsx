@@ -1,20 +1,23 @@
 /**
  * ORI APP — Main Tab Navigation
  * 4 tabs: Menu, Shop, About, Chat (Ori AI)
+ * Custom tab bar includes Sign Out on every screen.
  */
 
 import React from 'react';
-import { Tabs } from 'expo-router';
-import { View, Text, useColorScheme } from 'react-native';
-import { Leaf, ShoppingBag, Info, MessageCircle } from 'lucide-react-native';
+import { Tabs, useRouter } from 'expo-router';
+import { View, Text, TouchableOpacity, useColorScheme } from 'react-native';
+import { Leaf, ShoppingBag, Building2, Bot, LogOut } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { Platform } from 'react-native';
 
 import { NotificationBadge } from '@/components/ui/Badge';
 import { useCartStore } from '@/stores/cartStore';
-import { dark, light, gold, forest } from '@/theme/colors';
+import { useAuthStore } from '@/stores/authStore';
+import { dark, light } from '@/theme/colors';
 import { fontFamilies } from '@/theme/typography';
 
+// ─── Tab Icon ─────────────────────────────────────────────────────────────────
 function TabIcon({
   Icon,
   focused,
@@ -55,78 +58,131 @@ function TabIcon({
   );
 }
 
-export default function TabsLayout() {
-  const scheme     = useColorScheme();
-  const colors     = scheme === 'dark' ? dark : light;
-  const cartCount  = useCartStore((s) => s.getItemCount());
+// ─── Tab config (order must match Tabs.Screen order below) ────────────────────
+const TAB_CONFIG = [
+  { icon: Leaf,        label: 'Menu'  },
+  { icon: ShoppingBag, label: 'Shop'  },
+  { icon: Bot,         label: 'Ori AI' },
+  { icon: Building2,   label: 'About' },
+];
+
+// ─── Custom Tab Bar ───────────────────────────────────────────────────────────
+function CustomTabBar({ state, navigation }: any) {
+  const scheme    = useColorScheme();
+  const colors    = scheme === 'dark' ? dark : light;
+  const cartCount = useCartStore((s) => s.getItemCount());
+  const signOut   = useAuthStore((s) => s.signOut);
+  const router    = useRouter();
 
   const TAB_BAR_HEIGHT = Platform.OS === 'ios' ? 84 : 72;
 
-  return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarStyle: {
-          backgroundColor:  Platform.OS === 'ios' ? 'transparent' : colors.tabBar,
-          borderTopColor:   colors.tabBarBorder,
-          borderTopWidth:   1,
-          height:           TAB_BAR_HEIGHT,
-          paddingBottom:    Platform.OS === 'ios' ? 28 : 8,
-          paddingTop:       4,
-          elevation:        0,
-          position:         Platform.OS === 'ios' ? 'absolute' : 'relative',
-        },
-        tabBarBackground: Platform.OS === 'ios'
-          ? () => (
-              <BlurView
-                intensity={80}
-                tint={scheme === 'dark' ? 'dark' : 'light'}
-                style={{ position: 'absolute', inset: 0 }}
-              />
-            )
-          : undefined,
+  const handleSignOut = async () => {
+    await signOut();
+    router.replace('/(auth)/welcome');
+  };
+
+  const barContent = (
+    <View
+      style={{
+        flexDirection:   'row',
+        height:          TAB_BAR_HEIGHT,
+        alignItems:      'center',
+        borderTopWidth:  1,
+        borderTopColor:  colors.tabBarBorder,
+        paddingBottom:   Platform.OS === 'ios' ? 28 : 8,
+        paddingTop:      4,
+        backgroundColor: Platform.OS === 'ios' ? 'transparent' : colors.tabBar,
       }}
     >
-      {/* ── Menu Tab ──────────────────────────────────────────── */}
-      <Tabs.Screen
-        name="menu"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon Icon={Leaf} focused={focused} label="Menu" />
-          ),
-        }}
-      />
+      {/* ── 4 navigation tabs ─────────────────────────────────── */}
+      {state.routes.map((route: any, index: number) => {
+        const config  = TAB_CONFIG[index];
+        if (!config) return null;
+        const focused = state.index === index;
+        const badge   = index === 1 ? cartCount : undefined;
 
-      {/* ── Shop Tab ──────────────────────────────────────────── */}
-      <Tabs.Screen
-        name="shop"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon Icon={ShoppingBag} focused={focused} label="Shop" badge={cartCount} />
-          ),
-        }}
-      />
+        return (
+          <TouchableOpacity
+            key={route.key}
+            onPress={() => {
+              const event = navigation.emit({
+                type: 'tabPress',
+                target: route.key,
+                canPreventDefault: true,
+              });
+              if (!focused && !event.defaultPrevented) {
+                navigation.navigate(route.name);
+              }
+            }}
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+            activeOpacity={0.7}
+          >
+            <TabIcon
+              Icon={config.icon as typeof Leaf}
+              focused={focused}
+              label={config.label}
+              badge={badge}
+            />
+          </TouchableOpacity>
+        );
+      })}
 
-      {/* ── About Tab ─────────────────────────────────────────── */}
-      <Tabs.Screen
-        name="about"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon Icon={Info} focused={focused} label="About" />
-          ),
+      {/* ── Sign Out ──────────────────────────────────────────── */}
+      <TouchableOpacity
+        onPress={handleSignOut}
+        style={{
+          width:          56,
+          alignItems:     'center',
+          justifyContent: 'center',
+          paddingTop:     6,
+          gap:            3,
+          borderLeftWidth: 1,
+          borderLeftColor: colors.tabBarBorder,
         }}
-      />
+        activeOpacity={0.7}
+      >
+        <LogOut size={22} color={colors.tabInactive} strokeWidth={1.8} />
+        <Text
+          style={{
+            fontFamily: fontFamilies.bodyRegular,
+            fontSize:   9,
+            color:      colors.tabInactive,
+          }}
+        >
+          Sign Out
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 
-      {/* ── Chat Tab ──────────────────────────────────────────── */}
-      <Tabs.Screen
-        name="chat"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon Icon={MessageCircle} focused={focused} label="Ori AI" />
-          ),
-        }}
-      />
+  // iOS: absolute position with blur background
+  if (Platform.OS === 'ios') {
+    return (
+      <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
+        <BlurView
+          intensity={80}
+          tint={scheme === 'dark' ? 'dark' : 'light'}
+          style={{ position: 'absolute', inset: 0 }}
+        />
+        {barContent}
+      </View>
+    );
+  }
+
+  return barContent;
+}
+
+// ─── Tabs Layout ──────────────────────────────────────────────────────────────
+export default function TabsLayout() {
+  return (
+    <Tabs
+      tabBar={(props) => <CustomTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
+    >
+      <Tabs.Screen name="menu"  />
+      <Tabs.Screen name="shop"  />
+      <Tabs.Screen name="about" />
+      <Tabs.Screen name="chat"  />
     </Tabs>
   );
 }

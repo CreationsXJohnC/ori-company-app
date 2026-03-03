@@ -32,7 +32,7 @@ import { Linking } from 'react-native';
 
 export default function SignUpScreen() {
   const router  = useRouter();
-  const { colors, fontFamilies, gold, forest, warm } = useTheme();
+  const { colors, fontFamilies, gold } = useTheme();
   const signUp  = useAuthStore((s) => s.signUp);
   const toast   = useToast();
 
@@ -73,7 +73,7 @@ export default function SignUpScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: forest[950] }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -96,18 +96,18 @@ export default function SignUpScreen() {
               width:           40,
               height:          40,
               borderRadius:    20,
-              backgroundColor: '#1A2E1F',
+              backgroundColor: '#F4EAA9',
               alignItems:      'center',
               justifyContent:  'center',
             }}
           >
-            <ArrowLeft size={20} color={warm[100]} />
+            <ArrowLeft size={20} color="#7EBF94" />
           </TouchableOpacity>
           <Text
             style={{
               fontFamily: fontFamilies.headingBold,
               fontSize:   22,
-              color:      warm[100],
+              color:      '#7EBF94',
             }}
           >
             Create Account
@@ -123,9 +123,9 @@ export default function SignUpScreen() {
           {/* 21+ Banner */}
           <View
             style={{
-              backgroundColor: `${gold[500]}18`,
+              backgroundColor: `${gold[400]}18`,
               borderWidth:     1,
-              borderColor:     `${gold[500]}40`,
+              borderColor:     `${gold[400]}40`,
               borderRadius:    12,
               padding:         14,
               flexDirection:   'row',
@@ -139,7 +139,7 @@ export default function SignUpScreen() {
                 flex:       1,
                 fontFamily: fontFamilies.bodyMedium,
                 fontSize:   13,
-                color:      gold[300],
+                color:      gold[400],
                 lineHeight: 19,
               }}
             >
@@ -306,7 +306,7 @@ export default function SignUpScreen() {
                 onChange={onChange}
                 error={errors.is21Plus?.message}
                 label={
-                  <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 14, color: warm[100], lineHeight: 20 }}>
+                  <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 14, color: '#7EBF94', lineHeight: 20 }}>
                     <Text style={{ fontFamily: fontFamilies.bodySemiBold }}>
                       {COMPLIANCE.ageConfirm}
                     </Text>
@@ -327,7 +327,7 @@ export default function SignUpScreen() {
                 onChange={onChange}
                 error={errors.agreeToTerms?.message}
                 label={
-                  <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 14, color: warm[100], lineHeight: 20 }}>
+                  <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 14, color: '#7EBF94', lineHeight: 20 }}>
                     I agree to the{' '}
                     <Text
                       style={{ color: gold[400], textDecorationLine: 'underline' }}
@@ -361,7 +361,7 @@ export default function SignUpScreen() {
 
           {/* Sign In Link */}
           <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 4 }}>
-            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 14, color: '#8FAF96' }}>
+            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 14, color: '#7EBF94' }}>
               Already have an account?
             </Text>
             <TouchableOpacity onPress={() => router.push('/(auth)/sign-in')}>

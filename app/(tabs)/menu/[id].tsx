@@ -46,7 +46,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 export default function MenuProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router  = useRouter();
-  const { colors, fontFamilies, gold, forest, warm, semantic } = useTheme();
+  const { colors, fontFamilies, gold, purple, forest, warm, semantic } = useTheme();
 
   const { data: product, isLoading } = useMenuProduct(id);
   const addItem    = useReservationStore((s) => s.addItem);
@@ -115,14 +115,14 @@ export default function MenuProductDetailScreen() {
                     flexDirection:   'row',
                     alignItems:      'center',
                     gap:             6,
-                    backgroundColor: gold[500],
+                    backgroundColor: gold[400],
                     paddingHorizontal: 14,
                     paddingVertical:   8,
                     borderRadius:    20,
                   }}
                 >
-                  <ShoppingBasket size={16} color="#0D1B12" />
-                  <Text style={{ fontFamily: fontFamilies.bodyBold, fontSize: 14, color: '#0D1B12' }}>
+                  <ShoppingBasket size={16} color="#ffffff" />
+                  <Text style={{ fontFamily: fontFamilies.bodyBold, fontSize: 14, color: '#ffffff' }}>
                     {itemCount}
                   </Text>
                 </TouchableOpacity>
@@ -158,7 +158,7 @@ export default function MenuProductDetailScreen() {
               style={{
                 fontFamily:    fontFamilies.headingBold,
                 fontSize:      26,
-                color:         warm[100],
+                color:         '#ffffff',
                 letterSpacing: -0.5,
                 lineHeight:    34,
               }}
@@ -207,7 +207,7 @@ export default function MenuProductDetailScreen() {
                 )}
                 {product.cbd_percentage != null && (
                   <View style={{ alignItems: 'center', gap: 4 }}>
-                    <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 24, color: '#3B82F6' }}>
+                    <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 24, color: purple[400] }}>
                       {product.cbd_percentage.toFixed(1)}%
                     </Text>
                     <Text style={{ fontFamily: fontFamilies.bodyMedium, fontSize: 12, color: colors.textSecondary }}>
@@ -262,9 +262,9 @@ export default function MenuProductDetailScreen() {
           {/* Medical Disclaimer */}
           <View
             style={{
-              backgroundColor: `${gold[500]}10`,
+              backgroundColor: `${gold[400]}10`,
               borderWidth:     1,
-              borderColor:     `${gold[500]}30`,
+              borderColor:     `${gold[400]}30`,
               borderRadius:    12,
               padding:         14,
               gap:             6,
@@ -276,7 +276,7 @@ export default function MenuProductDetailScreen() {
                 Medical Disclaimer
               </Text>
             </View>
-            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 12, color: gold[300], lineHeight: 18 }}>
+            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 12, color: gold[400], lineHeight: 18 }}>
               {COMPLIANCE.medicalDisclaimer}
             </Text>
           </View>

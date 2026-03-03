@@ -100,17 +100,17 @@ export default function CheckoutScreen() {
         allowsDelayedPaymentMethods: false,
         appearance: {
           colors: {
-            primary:          '#C8922A',
-            background:       '#1A2E1F',
-            componentBackground: '#243425',
-            componentBorder:  '#2A4A35',
-            componentDivider: '#2A4A35',
-            primaryText:      '#F5F0E8',
-            secondaryText:    '#8FAF96',
-            componentText:    '#F5F0E8',
-            placeholderText:  '#5F8A6A',
-            icon:             '#8FAF96',
-            error:            '#EF4444',
+            primary:          '#7EBF94',
+            background:       '#ffffff',
+            componentBackground: '#F4EAA9',
+            componentBorder:  '#7EBF94',
+            componentDivider: '#7EBF94',
+            primaryText:      '#7EBF94',
+            secondaryText:    '#AE93C1',
+            componentText:    '#7EBF94',
+            placeholderText:  '#AE93C1',
+            icon:             '#7EBF94',
+            error:            '#E59F63',
           },
         },
       });
@@ -253,7 +253,7 @@ export default function CheckoutScreen() {
             size="lg"
             fullWidth
             isLoading={isProcessing}
-            leftIcon={<CreditCard size={18} color="#0D1B12" />}
+            leftIcon={<CreditCard size={18} color="#ffffff" />}
             onPress={handleSubmit(onSubmit)}
           />
         </ScrollView>

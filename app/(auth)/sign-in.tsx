@@ -17,7 +17,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Lock, ArrowLeft } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -29,7 +28,7 @@ import { signInSchema, type SignInFormData } from '@/utils/validation';
 
 export default function SignInScreen() {
   const router   = useRouter();
-  const { colors, fontFamilies, gold, forest, warm } = useTheme();
+  const { colors, fontFamilies, gold } = useTheme();
   const signIn   = useAuthStore((s) => s.signIn);
   const toast    = useToast();
   const passRef  = useRef<TextInput>(null);
@@ -46,7 +45,7 @@ export default function SignInScreen() {
   const onSubmit = async (data: SignInFormData) => {
     try {
       await signIn(data.email, data.password);
-      // Redirect handled by app/index.tsx (auth state change)
+      router.replace('/(tabs)/menu');
     } catch (err: any) {
       toast.error(
         'Sign In Failed',
@@ -58,7 +57,7 @@ export default function SignInScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: forest[950] }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -80,14 +79,14 @@ export default function SignInScreen() {
               width:           40,
               height:          40,
               borderRadius:    20,
-              backgroundColor: '#1A2E1F',
+              backgroundColor: '#F4EAA9',
               alignItems:      'center',
               justifyContent:  'center',
             }}
           >
-            <ArrowLeft size={20} color={warm[100]} />
+            <ArrowLeft size={20} color="#7EBF94" />
           </TouchableOpacity>
-          <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 22, color: warm[100] }}>
+          <Text style={{ fontFamily: fontFamilies.headingBold, fontSize: 22, color: '#7EBF94' }}>
             Welcome Back
           </Text>
         </View>
@@ -175,7 +174,7 @@ export default function SignInScreen() {
 
           {/* Sign Up Link */}
           <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 4 }}>
-            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 14, color: '#8FAF96' }}>
+            <Text style={{ fontFamily: fontFamilies.bodyRegular, fontSize: 14, color: '#7EBF94' }}>
               New to Ori?
             </Text>
             <TouchableOpacity onPress={() => router.push('/(auth)/sign-up')}>

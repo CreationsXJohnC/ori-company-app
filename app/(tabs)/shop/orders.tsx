@@ -174,7 +174,7 @@ export default function OrdersScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 48 }}
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={gold[500]} colors={[gold[500]]} />
+            <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={gold[400]} colors={[gold[400]]} />
           }
           ListEmptyComponent={
             <EmptyState

@@ -195,9 +195,9 @@ export default function ReservationScreen() {
             </Card>
 
             {/* Pay onsite notice */}
-            <View style={{ backgroundColor: `${gold[500]}12`, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: `${gold[500]}30`, flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
+            <View style={{ backgroundColor: `${gold[400]}12`, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: `${gold[400]}30`, flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
               <Text style={{ fontSize: 16 }}>💳</Text>
-              <Text style={{ flex: 1, fontFamily: fontFamilies.bodyRegular, fontSize: 13, color: gold[300], lineHeight: 19 }}>
+              <Text style={{ flex: 1, fontFamily: fontFamilies.bodyRegular, fontSize: 13, color: gold[400], lineHeight: 19 }}>
                 {COMPLIANCE.reservationNote}
               </Text>
             </View>
@@ -218,10 +218,10 @@ export default function ReservationScreen() {
                   borderRadius:    12,
                   padding:         14,
                   borderWidth:     1.5,
-                  borderColor:     pickupDate ? gold[500] : colors.border,
+                  borderColor:     pickupDate ? gold[400] : colors.border,
                 }}
               >
-                <Calendar size={18} color={pickupDate ? gold[500] : colors.textTertiary} />
+                <Calendar size={18} color={pickupDate ? gold[400] : colors.textTertiary} />
                 <Text style={{ flex: 1, fontFamily: fontFamilies.bodyRegular, fontSize: 16, color: pickupDate ? colors.textPrimary : colors.textTertiary }}>
                   {pickupDate ? format(new Date(pickupDate + 'T12:00:00'), 'EEEE, MMMM d, yyyy') : 'Select date (within 24 hours)'}
                 </Text>
@@ -261,16 +261,16 @@ export default function ReservationScreen() {
                       paddingHorizontal: 14,
                       paddingVertical:   8,
                       borderRadius:      10,
-                      backgroundColor:   pickupTime === slot ? gold[500] : colors.surfaceAlt,
+                      backgroundColor:   pickupTime === slot ? gold[400] : colors.surfaceAlt,
                       borderWidth:       1,
-                      borderColor:       pickupTime === slot ? gold[500] : colors.border,
+                      borderColor:       pickupTime === slot ? gold[400] : colors.border,
                     }}
                   >
                     <Text
                       style={{
                         fontFamily: fontFamilies.bodyMedium,
                         fontSize:   13,
-                        color:      pickupTime === slot ? '#0D1B12' : colors.textSecondary,
+                        color:      pickupTime === slot ? '#ffffff' : colors.textSecondary,
                       }}
                     >
                       {formatTimeSlot(slot)}
