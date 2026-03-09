@@ -53,45 +53,47 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 });
 
 // ─── Helper: Invoke Edge Function ─────────────────────────────────────────────
+// Uses raw fetch instead of supabase.functions.invoke() to avoid FunctionsClient
+// internal auth state issues (SDK only calls setAuth on SIGNED_IN/TOKEN_REFRESHED,
+// not INITIAL_SESSION). JWT is read fresh from the session on every call.
 export async function invokeFunction<T = unknown>(
   functionName: string,
   body?: Record<string, unknown>
 ): Promise<{ data: T | null; error: Error | null }> {
-  // Sync the FunctionsClient auth header before every call.
-  // The SDK only calls functions.setAuth() on SIGNED_IN / TOKEN_REFRESHED —
-  // NOT on INITIAL_SESSION (session restored from storage on app restart).
-  // Without this, invoke() sends the anon key instead of the user JWT.
   const { data: { session } } = await supabase.auth.getSession();
-  if (session?.access_token) {
-    supabase.functions.setAuth(session.access_token);
-  }
+  const jwt = session?.access_token ?? '';
 
-  const {
-    data,
-    error,
-    response,
-  } = await supabase.functions.invoke<T>(functionName, { body });
+  const res = await fetch(
+    `${SUPABASE_URL}/functions/v1/${functionName}`,
+    {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${jwt}`,
+        'apikey':        SUPABASE_ANON_KEY,
+        'x-app-name':   'ori-app',
+      },
+      body: JSON.stringify(body ?? {}),
+    }
+  );
 
-  if (error) {
-    let message = error.message;
+  if (!res.ok) {
+    let message = `Edge function error: ${res.status}`;
     try {
-      // Use error.context if available, fall back to the response property.
-      // Duck-type instead of instanceof Response — the class in the Expo bundle
-      // may differ from the one the Supabase SDK uses internally.
-      const ctx: any = (error as any).context ?? response;
-      if (ctx && typeof ctx.json === 'function') {
-        const json = await ctx.json();
-        // Edge functions return { error: "..." }; the Supabase relay returns { message: "..." }
-        message = json?.error ?? json?.message ?? message;
-      } else if (ctx && typeof ctx.text === 'function') {
-        const text = await ctx.text();
-        if (text) message = text;
-      }
-    } catch { /* keep original message */ }
+      const json = await res.json();
+      message = json?.error ?? json?.message ?? message;
+    } catch {
+      try { message = await res.text() || message; } catch { /* keep */ }
+    }
     return { data: null, error: new Error(message) };
   }
 
-  return { data: data ?? null, error: null };
+  try {
+    const data = await res.json() as T;
+    return { data, error: null };
+  } catch {
+    return { data: null, error: new Error('Failed to parse edge function response') };
+  }
 }
 
 // ─── Helper: Get Current Session ──────────────────────────────────────────────
