@@ -153,9 +153,15 @@ serve(async (req: Request) => {
     );
 
     const jwt = authHeader.replace(/^Bearer\s+/i, '');
+    // Log JWT prefix (safe — never logs full token) to diagnose auth failures
+    console.log(`[chat-completion] JWT len=${jwt.length}, prefix=${jwt.slice(0, 20)}`);
+
     const { data: { user }, error: authError } = await serviceSupabase.auth.getUser(jwt);
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      const detail = authError?.message ?? 'no user returned';
+      console.error(`[chat-completion] Auth failed: ${detail}`);
+      // Return the real Supabase error so we can diagnose the root cause
+      return new Response(JSON.stringify({ error: `Auth failed: ${detail}` }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });

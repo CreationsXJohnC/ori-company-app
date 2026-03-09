@@ -62,6 +62,8 @@ export async function invokeFunction<T = unknown>(
 ): Promise<{ data: T | null; error: Error | null }> {
   const { data: { session } } = await supabase.auth.getSession();
   const jwt = session?.access_token ?? '';
+  // Diagnostic log — safe (only logs token prefix, never full token)
+  console.log(`[invokeFunction] session=${!!session} jwt_len=${jwt.length} prefix=${jwt.slice(0, 20)}`);
 
   const res = await fetch(
     `${SUPABASE_URL}/functions/v1/${functionName}`,
