@@ -62,7 +62,11 @@ export async function invokeFunction<T = unknown>(
   // in some timing scenarios; passing it directly avoids the issue entirely.
   const { data: { session } } = await supabase.auth.getSession();
 
-  const { data, error } = await supabase.functions.invoke<T>(functionName, {
+  const {
+    data,
+    error,
+    response,
+  } = await supabase.functions.invoke<T>(functionName, {
     body,
     headers: session?.access_token
       ? { Authorization: `Bearer ${session.access_token}` }
@@ -72,12 +76,17 @@ export async function invokeFunction<T = unknown>(
   if (error) {
     let message = error.message;
     try {
-      const ctx = (error as any).context;
-      // Duck-type check instead of instanceof — the Response class in the Expo
-      // bundle may differ from the one the Supabase SDK uses internally.
+      // Use error.context if available, fall back to the response property.
+      // Duck-type instead of instanceof Response — the class in the Expo bundle
+      // may differ from the one the Supabase SDK uses internally.
+      const ctx: any = (error as any).context ?? response;
       if (ctx && typeof ctx.json === 'function') {
         const json = await ctx.json();
-        if (json?.error) message = json.error;
+        // Edge functions return { error: "..." }; the Supabase relay returns { message: "..." }
+        message = json?.error ?? json?.message ?? message;
+      } else if (ctx && typeof ctx.text === 'function') {
+        const text = await ctx.text();
+        if (text) message = text;
       }
     } catch { /* keep original message */ }
     return { data: null, error: new Error(message) };
