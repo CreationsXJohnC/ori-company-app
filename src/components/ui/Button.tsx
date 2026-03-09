@@ -10,6 +10,8 @@ import {
   ActivityIndicator,
   View,
   type TouchableOpacityProps,
+  type StyleProp,
+  type ViewStyle,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -34,6 +36,7 @@ interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
   rightIcon?:  React.ReactNode;
   fullWidth?:  boolean;
   haptic?:     boolean;
+  style?:      StyleProp<ViewStyle>;
 }
 
 export function Button({
@@ -47,6 +50,7 @@ export function Button({
   haptic     = true,
   disabled,
   onPress,
+  style,
   ...rest
 }: ButtonProps) {
   const { colors, fontFamilies } = useTheme();
@@ -109,6 +113,7 @@ export function Button({
           gap:               8,
           opacity:           isDisabled ? 0.65 : 1,
         },
+        style,
       ]}
       onPress={handlePress}
       onPressIn={handlePressIn}

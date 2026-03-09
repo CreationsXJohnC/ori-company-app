@@ -181,8 +181,8 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="menu"  />
       <Tabs.Screen name="shop"  />
-      <Tabs.Screen name="about" />
       <Tabs.Screen name="chat"  />
+      <Tabs.Screen name="about" />
     </Tabs>
   );
 }

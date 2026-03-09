@@ -57,13 +57,33 @@ export async function invokeFunction<T = unknown>(
   functionName: string,
   body?: Record<string, unknown>
 ): Promise<{ data: T | null; error: Error | null }> {
+  // Explicitly fetch the session so the JWT is guaranteed to be in the request.
+  // supabase.functions.invoke relies on a pre-set header that can miss the session
+  // in some timing scenarios; passing it directly avoids the issue entirely.
+  const { data: { session } } = await supabase.auth.getSession();
+
   const { data, error } = await supabase.functions.invoke<T>(functionName, {
     body,
+    headers: session?.access_token
+      ? { Authorization: `Bearer ${session.access_token}` }
+      : undefined,
   });
-  return {
-    data: data ?? null,
-    error: error ? new Error(error.message) : null,
-  };
+
+  if (error) {
+    let message = error.message;
+    try {
+      const ctx = (error as any).context;
+      // Duck-type check instead of instanceof — the Response class in the Expo
+      // bundle may differ from the one the Supabase SDK uses internally.
+      if (ctx && typeof ctx.json === 'function') {
+        const json = await ctx.json();
+        if (json?.error) message = json.error;
+      }
+    } catch { /* keep original message */ }
+    return { data: null, error: new Error(message) };
+  }
+
+  return { data: data ?? null, error: null };
 }
 
 // ─── Helper: Get Current Session ──────────────────────────────────────────────

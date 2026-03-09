@@ -30,12 +30,12 @@ export const signUpSchema = z
     confirmPassword: z.string(),
     patientId: z.string().optional(),
     patientState: z.string().optional(),
-    is21Plus: z.literal(true, {
-      errorMap: () => ({ message: 'You must be 21 or older to use this app' }),
-    }),
-    agreeToTerms: z.literal(true, {
-      errorMap: () => ({ message: 'You must agree to the terms of service' }),
-    }),
+    is21Plus: z
+      .boolean()
+      .refine((v) => v === true, { message: 'You must be 21 or older to use this app' }),
+    agreeToTerms: z
+      .boolean()
+      .refine((v) => v === true, { message: 'You must agree to the terms of service' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
