@@ -143,20 +143,17 @@ serve(async (req: Request) => {
       });
     }
 
-    // Service role client (for writing messages after response)
+    // Service role client — used for all DB writes and auth verification.
+    // We pass the JWT directly to auth.getUser(jwt) which is the correct
+    // server-side pattern; creating a separate user-scoped client with global
+    // headers does NOT reliably forward the JWT to auth.getUser() in Deno.
     const serviceSupabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    // User-scoped client (for auth verification)
-    const userSupabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
-    const { data: { user }, error: authError } = await userSupabase.auth.getUser();
+    const jwt = authHeader.replace(/^Bearer\s+/i, '');
+    const { data: { user }, error: authError } = await serviceSupabase.auth.getUser(jwt);
     if (authError || !user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
