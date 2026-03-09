@@ -143,41 +143,32 @@ serve(async (req: Request) => {
       });
     }
 
-    // Service role client — used for all DB writes (not auth, see below).
+    // ── Official Supabase edge function auth pattern ──────────────────────────
+    // Create user-scoped client with anon key + user JWT as global Authorization
+    // header. Calling auth.getUser() (no args) then uses that header to validate
+    // the token server-side. This is the only pattern that works reliably for
+    // both HS256 and ES256 JWT algorithms in Deno.
+    const userSupabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: { user }, error: authError } = await userSupabase.auth.getUser();
+    if (authError || !user) {
+      const detail = authError?.message ?? 'no user returned';
+      console.error(`[chat-completion] Auth failed: ${detail}`);
+      return new Response(JSON.stringify({ error: `Unauthorized: ${detail}` }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Service role client — used for all DB writes (bypasses RLS).
     const serviceSupabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
-
-    const jwt = authHeader.replace(/^Bearer\s+/i, '');
-
-    // Validate JWT via raw fetch to Auth API. The Supabase JS SDK's
-    // auth.getUser(jwt) has issues with ES256-signed tokens (newer Supabase
-    // projects) when called from a service-role client in Deno. Raw fetch
-    // works correctly regardless of JWT signing algorithm.
-    const authRes = await fetch(`${Deno.env.get('SUPABASE_URL')}/auth/v1/user`, {
-      headers: {
-        'Authorization': `Bearer ${jwt}`,
-        'apikey': Deno.env.get('SUPABASE_ANON_KEY')!,
-      },
-    });
-
-    if (!authRes.ok) {
-      const errText = await authRes.text();
-      console.error(`[chat-completion] Auth API ${authRes.status}: ${errText}`);
-      return new Response(JSON.stringify({ error: `Unauthorized: ${errText}` }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const user = await authRes.json() as { id: string; email?: string };
-    if (!user?.id) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
 
     // ── Parse request ─────────────────────────────────────────────────────────
     const { session_id: sessionId, message } = await req.json();
