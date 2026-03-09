@@ -50,6 +50,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
+        // The SupabaseClient only calls functions.setAuth() on SIGNED_IN /
+        // TOKEN_REFRESHED events — NOT when the session is restored from
+        // storage (INITIAL_SESSION). Without this, functions.invoke() sends
+        // the anon key instead of the user JWT, causing "Invalid JWT" errors.
+        supabase.functions.setAuth(session.access_token);
         const profile = await fetchProfile(session.user.id);
         set({ session, user: session.user, profile });
       }
@@ -57,9 +62,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       // Listen for auth state changes (token refresh, sign-out, etc.)
       supabase.auth.onAuthStateChange(async (_event, session) => {
         if (session) {
+          supabase.functions.setAuth(session.access_token);
           const profile = await fetchProfile(session.user.id);
           set({ session, user: session.user, profile });
         } else {
+          supabase.functions.setAuth('');
           set({ session: null, user: null, profile: null });
         }
       });
