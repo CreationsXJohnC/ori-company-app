@@ -57,6 +57,15 @@ export async function invokeFunction<T = unknown>(
   functionName: string,
   body?: Record<string, unknown>
 ): Promise<{ data: T | null; error: Error | null }> {
+  // Sync the FunctionsClient auth header before every call.
+  // The SDK only calls functions.setAuth() on SIGNED_IN / TOKEN_REFRESHED —
+  // NOT on INITIAL_SESSION (session restored from storage on app restart).
+  // Without this, invoke() sends the anon key instead of the user JWT.
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    supabase.functions.setAuth(session.access_token);
+  }
+
   const {
     data,
     error,
