@@ -156,9 +156,7 @@ serve(async (req: Request) => {
 
     const { data: { user }, error: authError } = await userSupabase.auth.getUser();
     if (authError || !user) {
-      const detail = authError?.message ?? 'no user returned';
-      console.error(`[chat-completion] Auth failed: ${detail}`);
-      return new Response(JSON.stringify({ error: `Unauthorized: ${detail}` }), {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
